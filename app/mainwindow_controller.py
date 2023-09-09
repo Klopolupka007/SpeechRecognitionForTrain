@@ -94,7 +94,9 @@ class MainWindowController:
         
         self.__view.micro_button.setEnabled(False)
         self.micro_read_thread.join()
-        
+
+        flag = self.__view.checkbox.isChecked()
+        print(flag)
         question_text = self.voice_recognizer.recognize_frames(self.frames)
         print(question_text)
         if (question_text):
@@ -109,7 +111,7 @@ class MainWindowController:
             
             question_id = inserted_question.id
             
-            self.generate_answ_thread = GenerateAnswerThread(self.question_answerer, self.txt2speech, self.messages_model, question_text, question_id)
+            self.generate_answ_thread = GenerateAnswerThread(self.question_answerer, self.txt2speech, self.messages_model, "я нахожусь в вагоне " + self.__view.combobox.currentText() + ' ' + question_text, question_id)
             self.generate_answ_thread.answer_generated.connect(self.__on_question_answered)
             self.generate_answ_thread.start()
         
