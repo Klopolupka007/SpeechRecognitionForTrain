@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="images">
     <file>micro.png</file>
+    <file>micro_light.png</file>
+    <file>stop_recording.png</file>
+    <file>background_image.png</file>
   </qresource>
 </RCC>
