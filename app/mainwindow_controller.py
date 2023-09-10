@@ -29,13 +29,15 @@ class MainWindowController:
         self.elapsed_time = QtCore.QTime(0, 0)
         
         RATE = 16000
-        self.MAX_RECORD_SECONDS = 30
+        self.MAX_RECORD_SECONDS = 60
         
         self.audio_recorder = AudioRecorder(RATE, self.MAX_RECORD_SECONDS)
         self.voice_recognizer = VoiceRecognizer(RATE)
         
         self.txt2speech = TextToSpeech()
         self.question_answerer = QuestionAnswerer()
+        
+        self.context = []
 
     
     def load_conversation(self):
@@ -94,8 +96,11 @@ class MainWindowController:
         
         self.__view.micro_button.setEnabled(False)
         self.micro_read_thread.join()
-        
+
+        flag = self.__view.checkbox.isChecked()
+        print(flag)
         question_text = self.voice_recognizer.recognize_frames(self.frames)
+        self.context.append(question_text)
         print(question_text)
         if (question_text):
             inserted_question = self.messages_model.insert_question(question_text)
@@ -109,7 +114,7 @@ class MainWindowController:
             
             question_id = inserted_question.id
             
-            self.generate_answ_thread = GenerateAnswerThread(self.question_answerer, self.txt2speech, self.messages_model, question_text, question_id)
+            self.generate_answ_thread = GenerateAnswerThread(self.question_answerer, self.context, self.txt2speech, self.messages_model, "я нахожусь в вагоне " + self.__view.combobox.currentText() + ' ' + question_text, question_id)
             self.generate_answ_thread.answer_generated.connect(self.__on_question_answered)
             self.generate_answ_thread.start()
         
@@ -122,6 +127,7 @@ class MainWindowController:
         warning_box.setIcon(QtWidgets.QMessageBox.Warning)
         warning_box.setWindowTitle("Внимание")
         warning_box.setText("Не удалось распознать речь.")
+        self.__view.micro_button.setEnabled(True)
         warning_box.setStandardButtons(QtWidgets.QMessageBox.Ok)
         warning_box.exec_()
 
@@ -129,6 +135,7 @@ class MainWindowController:
     def __on_question_answered(self, audio, inserted_answer):
         answer_sending_time = self.__convert_date_format(inserted_answer.sending_datetime)
         answer_text = inserted_answer.msg_text
+        self.context.append(answer_text)
         answer_widget = Ui_AnswerWidget()
         answer_widget.set_message_content(answer_text, answer_sending_time)
         self.__view.add_answer(answer_widget)

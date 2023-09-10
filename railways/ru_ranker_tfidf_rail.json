@@ -1,0 +1,54 @@
+{
+  "chainer": {
+    "in": ["query"],
+    "out": ["doc_info", "tfidf_doc_scores"],
+    "pipe": [
+      {
+        "class_name": "hashing_tfidf_vectorizer",
+        "id": "vectorizer",
+        "save_path": "./data/index_rail.npz",
+        "load_path": "./data/index_rail.npz",
+        "tokenizer": {
+          "class_name": "stream_spacy_tokenizer",
+          "spacy_model": "ru_core_news_sm",
+          "lemmas": true,
+          "lowercase": true,
+          "filter_stopwords": true,
+          "ngram_range": [1, 3]
+        }
+      },
+      {
+        "class_name": "tfidf_ranker",
+        "top_n": 10,
+        "in": ["query"],
+        "out": ["tfidf_doc_ids", "tfidf_doc_scores"],
+        "vectorizer": "#vectorizer"
+      },
+      {
+        "class_name": "sqlite_base:SQLiteVocab",
+        "in": ["tfidf_doc_ids"],
+        "out": ["doc_info"],
+        "load_path": "data/paragraphs_rail.db"
+      }
+    ]
+  },
+  "train": {
+    "batch_size": 10000,
+    "evaluation_targets": [],
+    "class_name": "fit_trainer"
+  },
+  "metadata": {
+    "variables": {
+    },
+    "download": [
+      {
+        "url": "http://files.deeppavlov.ai/tmp/index_rail.npz",
+        "subdir": "./data"
+      },
+      {
+        "url": "http://files.deeppavlov.ai/tmp/paragraphs_rail.db",
+        "subdir": "./data"
+      }
+    ]
+  }
+}
