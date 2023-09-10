@@ -25,9 +25,10 @@ __Программые модули состоят из:__
 Ввод и вывод ответов и вопросов осуществляется через голосовые сообщения (Telegram) и встроенные функции микрофона (Desktop).
 
 ***Перед пользованием программной реализацией необходимо установить зависимости и подключить языковую модель LLaMa:***
-   - Зависимости: ```requirements.txt```
+   - Зависимости: ```pip install -r requirements.txt```
+   - Установить Microsoft C++ Build Tools https://visualstudio.microsoft.com/ru/visual-cpp-build-tools/
    - LLaMa: ```railways/run_all_servers.bat```
-### Desctop-версия
+### Desktop-версия
 Автономная версия, использующая вычислительные ресурсы пользователя.
 
 Запустить оконное приложение: ```app/open_desktop.bat```
